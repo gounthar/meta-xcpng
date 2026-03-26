@@ -1,3 +1,6 @@
 [submodule "dnf-bridge"]
 	path = dnf-bridge
 	url = https://github.com/xcp-ng/dnf-bridge
+[submodule "meta-almalinux"]
+	path = meta-almalinux
+	url = https://github.com/xcp-ng/meta-almalinux.git

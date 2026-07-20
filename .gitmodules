@@ -7,3 +7,6 @@
 [submodule "meta-xcpng/recipes-xcpng/libempserver"]
 	path = meta-xcpng/recipes-xcpng/libempserver
 	url = https://github.com/xcp-ng-rpms/libempserver.git
+[submodule "meta-xcpng/recipes-xcpng/xcp-ng-release"]
+	path = meta-xcpng/recipes-xcpng/xcp-ng-release
+	url = https://github.com/xcp-ng-rpms/xcp-ng-release

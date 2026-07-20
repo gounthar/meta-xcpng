@@ -10,3 +10,6 @@
 [submodule "meta-xcpng/recipes-xcpng/xcp-ng-release"]
 	path = meta-xcpng/recipes-xcpng/xcp-ng-release
 	url = https://github.com/xcp-ng-rpms/xcp-ng-release
+[submodule "meta-xcpng/recipes-xcpng/branding-xcp-ng"]
+	path = meta-xcpng/recipes-xcpng/branding-xcp-ng
+	url = https://github.com/xcp-ng-rpms/branding-xcp-ng

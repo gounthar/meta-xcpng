@@ -16,3 +16,6 @@
 [submodule "meta-xcpng/recipes-xcpng/ocaml"]
 	path = meta-xcpng/recipes-xcpng/ocaml
 	url = https://github.com/xcp-ng-rpms/ocaml
+[submodule "meta-xcpng/recipes-xcpng/ocaml-findlib"]
+	path = meta-xcpng/recipes-xcpng/ocaml-findlib
+	url = https://github.com/xcp-ng-rpms/ocaml-findlib

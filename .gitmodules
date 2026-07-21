@@ -13,3 +13,6 @@
 [submodule "meta-xcpng/recipes-xcpng/branding-xcp-ng"]
 	path = meta-xcpng/recipes-xcpng/branding-xcp-ng
 	url = https://github.com/xcp-ng-rpms/branding-xcp-ng
+[submodule "meta-xcpng/recipes-xcpng/ocaml"]
+	path = meta-xcpng/recipes-xcpng/ocaml
+	url = https://github.com/xcp-ng-rpms/ocaml

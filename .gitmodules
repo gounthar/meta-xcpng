@@ -4,3 +4,6 @@
 [submodule "meta-almalinux"]
 	path = meta-almalinux
 	url = https://github.com/xcp-ng/meta-almalinux.git
+[submodule "meta-xcpng/recipes-xcpng/libempserver"]
+	path = meta-xcpng/recipes-xcpng/libempserver
+	url = https://github.com/xcp-ng-rpms/libempserver.git

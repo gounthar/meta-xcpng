@@ -7,7 +7,7 @@
 # for xcp-ng-build-env on another side.
 
 SRC_URI = "git://github.com/xcp-ng/xcp-ng-build-env;protocol=https;nobranch=1"
-SRCREV = "dc49f45bd5f0c9c7f95832a36724b771019c92a9"
+SRCREV = "899b5a1c67c4a3936533023f031b49adc563b6c7"
 S = "${UNPACKDIR}/git"
 
 addtask build_bootstrap after do_unpack

@@ -25,3 +25,12 @@
 [submodule "meta-xcpng/recipes-epel-queue/dev86"]
 	path = meta-xcpng/recipes-epel-queue/dev86
 	url = https://github.com/xcp-ng-rpms/dev86.git
+[submodule "meta-xcpng/recipes-xcpng/opam"]
+	path = meta-xcpng/recipes-xcpng/opam
+	url = https://github.com/xcp-ng-rpms/opam.git
+[submodule "meta-xcpng/recipes-xcpng/xs-opam-src"]
+	path = meta-xcpng/recipes-xcpng/xs-opam-src
+	url = https://github.com/xcp-ng-rpms/xs-opam-src.git
+[submodule "meta-xcpng/recipes-xcpng/xs-opam-repo"]
+	path = meta-xcpng/recipes-xcpng/xs-opam-repo
+	url = https://github.com/xcp-ng-rpms/xs-opam-repo.git

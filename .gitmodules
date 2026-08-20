@@ -19,3 +19,9 @@
 [submodule "meta-xcpng/recipes-xcpng/ocaml-findlib"]
 	path = meta-xcpng/recipes-xcpng/ocaml-findlib
 	url = https://github.com/xcp-ng-rpms/ocaml-findlib
+[submodule "meta-xcpng/recipes-xcpng/xen"]
+	path = meta-xcpng/recipes-xcpng/xen
+	url = https://github.com/xcp-ng-rpms/xen.git
+[submodule "meta-xcpng/recipes-epel-queue/dev86"]
+	path = meta-xcpng/recipes-epel-queue/dev86
+	url = https://github.com/xcp-ng-rpms/dev86.git

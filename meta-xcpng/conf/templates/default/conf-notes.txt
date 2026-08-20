@@ -4,7 +4,7 @@
 You can now run 'bitbake <target>'
 
 Common targets are:
-    (none yet)
+    xen
 
 Other commonly useful commands are:
  - 'devtool' and 'recipetool' handle common recipe tasks

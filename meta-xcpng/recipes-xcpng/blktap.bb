@@ -1,0 +1,1 @@
+inherit srpm-intree

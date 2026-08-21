@@ -40,3 +40,6 @@
 [submodule "meta-xcpng/recipes-epel-queue/python-bitarray"]
 	path = meta-xcpng/recipes-epel-queue/python-bitarray
 	url = https://github.com/xcp-ng-rpms/python-bitarray.git
+[submodule "meta-xcpng/recipes-xcpng/blktap"]
+	path = meta-xcpng/recipes-xcpng/blktap
+	url = https://github.com/xcp-ng-rpms/blktap.git

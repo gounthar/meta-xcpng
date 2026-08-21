@@ -34,3 +34,9 @@
 [submodule "meta-xcpng/recipes-xcpng/xs-opam-repo"]
 	path = meta-xcpng/recipes-xcpng/xs-opam-repo
 	url = https://github.com/xcp-ng-rpms/xs-opam-repo.git
+[submodule "meta-xcpng/recipes-xcpng/sm"]
+	path = meta-xcpng/recipes-xcpng/sm
+	url = https://github.com/xcp-ng-rpms/sm.git
+[submodule "meta-xcpng/recipes-epel-queue/python-bitarray"]
+	path = meta-xcpng/recipes-epel-queue/python-bitarray
+	url = https://github.com/xcp-ng-rpms/python-bitarray.git

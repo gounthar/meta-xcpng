@@ -7,6 +7,8 @@ Common targets are:
     xen
 
 Other commonly useful commands are:
- - 'devtool' and 'recipetool' handle common recipe tasks
  - 'bitbake-layers' handles common layer tasks
- - 'oe-pkgdata-util' handles common target package tasks
+
+Other useful advertised here by oe-core, which we should review for
+inclusion, are:
+ - 'devtool' and 'recipetool' handle common recipe tasks

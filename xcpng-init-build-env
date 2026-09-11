@@ -1,0 +1,2 @@
+. .templateconf
+. dnf-bridge/oe-init-build-env

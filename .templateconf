@@ -1,0 +1,2 @@
+# Template settings
+TEMPLATECONF=${TEMPLATECONF:-$OEROOT/../meta-xcpng/conf/templates/default}

@@ -13,20 +13,20 @@
 # the option is a question of removing the # character and making any change to the
 # variable as required.
 
+# XCP-ng note: some settings below may not be available (yet)
+
 #
 # Machine Selection
 #
-# You need to select a specific machine to target the build with. There are a selection
-# of emulated machines available which can boot and run in the QEMU emulator:
 #
-#MACHINE ?= "qemuarm"
-#MACHINE ?= "qemuarm64"
-#MACHINE ?= "qemuriscv64"
-#MACHINE ?= "qemux86"
-#MACHINE ?= "qemux86-64"
+# You need to select a specific machine to target the build with. Here is a selection
+# of machines suitable for building XCP-ng:
 #
-# This sets the default machine to be qemux86-64 if no other machine is selected:
-MACHINE ??= "qemux86-64"
+#MACHINE ?= "x86_64_v2"
+#MACHINE ?= "x86_64" # not supported today
+#MACHINE ?= "aarch64"
+# This sets the default machine to be x86_64_v2 if no other machine is selected:
+MACHINE ??= "x86_64_v2"
 
 # These are some of the more commonly used values. Looking at the files in the
 # meta/conf/machine directory, or the conf/machine directory of any additional layers
@@ -72,60 +72,6 @@ MACHINE ??= "qemux86-64"
 # The default is a tmp directory under TOPDIR.
 #
 #TMPDIR = "${TOPDIR}/tmp"
-
-
-#
-# Package Management configuration
-#
-# This variable lists which packaging formats to enable. Multiple package backends
-# can be enabled at once and the first item listed in the variable will be used
-# to generate the root filesystems.
-# Options are:
-#  - 'package_deb' for debian style deb files
-#  - 'package_ipk' for ipk files are used by opkg (a debian style embedded package manager)
-#  - 'package_rpm' for rpm style packages
-# E.g.: PACKAGE_CLASSES ?= "package_rpm package_deb package_ipk"
-# We default to ipk (via meta/conf/distro/defaultsetup.conf included in meta/conf/bitbake.conf):
-#PACKAGE_CLASSES ?= "package_ipk"
-
-#
-# SDK target architecture
-#
-# This variable specifies the architecture to build SDK items for and means
-# you can build the SDK packages for architectures other than the machine you are
-# running the build on (i.e. building i686 packages on an x86_64 host).
-# Supported values are i686, x86_64, aarch64
-#SDKMACHINE ?= "i686"
-
-#
-# Extra image configuration defaults
-#
-# The EXTRA_IMAGE_FEATURES variable allows extra packages to be added to the generated
-# images. Some of these options are added to certain image types automatically. Some
-# of the features available are:
-#  "dbg-pkgs"             - add -dbg packages for all installed packages
-#                           (adds symbol information for debugging/profiling)
-#  "src-pkgs"             - add -src packages for all installed packages
-#                           (adds source code for debugging)
-#  "dev-pkgs"             - add -dev packages for all installed packages
-#                           (useful if you want to develop against libs in the image)
-#  "ptest-pkgs"           - add -ptest packages for all ptest-enabled packages
-#                           (useful if you want to run the package test suites)
-#  "tools-sdk"            - add development tools (gcc, make, pkgconfig etc.)
-#  "tools-debug"          - add debugging tools (gdb, strace)
-#  "eclipse-debug"        - add Eclipse remote debugging support
-#  "tools-profile"        - add profiling tools (oprofile, lttng, valgrind)
-#  "tools-testapps"       - add useful testing tools (ts_print, aplay, arecord etc.)
-#  "allow-empty-password" - allow users to have an empty password
-#  "empty-root-password"  - the root user has no password set
-#  "allow-root-login      - the root user can login
-# There are other features that can be used here too, see
-# meta/classes-recipe/image.bbclass and
-# meta/classes-recipe/core-image.bbclass for more details.
-#
-# The following will allow root login without a password for convenience.
-# Use with care, and never in product builds.
-#EXTRA_IMAGE_FEATURES ?= "allow-empty-password empty-root-password allow-root-login"
 
 #
 # Additional image features
@@ -246,3 +192,92 @@ BB_DISKMON_DIRS ??= "\
 # track the version of this file when it was generated. This can safely be ignored if
 # this doesn't mean anything to you.
 CONF_VERSION = "2"
+
+## settings below come from oe-core's local.conf.sample.extended
+
+# BBMASK contains regular expressions that can be used to tell BitBake to ignore
+# certain recipes.
+#BBMASK = ""
+
+#
+# Parallelism Options
+#
+# These two options control how much parallelism BitBake should use. The first
+# option determines how many tasks bitbake should run in parallel:
+#
+#BB_NUMBER_THREADS ?= "4"
+#
+# Default to setting automatically based on cpu count
+#BB_NUMBER_THREADS ?= "${@oe.utils.cpu_count()}"
+#
+# The second option controls how many processes make should run in parallel when
+# running compile tasks:
+#
+#PARALLEL_MAKE ?= "-j 4"
+#
+# Default to setting automatically based on cpu count
+#PARALLEL_MAKE ?= "-j ${@oe.utils.cpu_count()}"
+#
+# For a quad-core machine, BB_NUMBER_THREADS = "4", PARALLEL_MAKE = "-j 4" would
+# be appropriate for example.
+#
+# Some users are behind firewalls or use servers where the number of parallel connections
+# is limited. In such cases you can limit the number of fetch tasks which run in parallel by
+# setting the option below, in this case limiting to a maximum of 4 fetch tasks in parallel:
+#
+#do_fetch[number_threads] = "4"
+#
+
+# The network based PR service host and port
+# Uncomment the following lines to enable PRservice.
+# Set PRSERV_HOST to 'localhost:0' to automatically
+# start local PRService.
+# Set to other values to use remote PRService.
+#PRSERV_HOST = "localhost:0"
+
+#
+# Disk space monitor, take action when the disk space or the amount of
+# inode is running low, it is enabled when BB_DISKMON_DIRS is set.
+#
+# Set the directory for the monitor, the format is:
+# "action,directory,minimum_space,minimum_free_inode"
+#
+# The "action" must be set and should be one of:
+# HALT: Immediately halt
+# STOPTASKS: The new tasks can't be executed any more, will stop the build
+#           when the running tasks have been done.
+# WARN: show warnings (see BB_DISKMON_WARNINTERVAL for more information)
+#
+# The "directory" must be set, any directory is OK.
+#
+# Either "minimum_space" or "minimum_free_inode" (or both of them)
+# should be set, otherwise the monitor would not be enabled,
+# the unit can be G, M, K or none, but do NOT use GB, MB or KB
+# (B is not needed).
+#BB_DISKMON_DIRS = "STOPTASKS,${TMPDIR},1G,100K WARN,${SSTATE_DIR},1G,100K"
+#
+# Set disk space and inode interval (only works when the action is "WARN",
+# the unit can be G, M, or K, but do NOT use the GB, MB or KB
+# (B is not needed), the format is:
+# "disk_space_interval,disk_inode_interval", the default value is
+# "50M,5K" which means that it would warn when the free space is
+# lower than the minimum space(or inode), and would repeat the warning
+# when the disk space reduces 50M (or the amount of inode reduces 5k).
+#BB_DISKMON_WARNINTERVAL = "50M,5K"
+
+
+## XCP-ng example useful tunings
+
+# Enable ccache for all packages, using one cache per package
+#
+#XCPNGDEV_BUILD_OPTS:append = " --ccache=${TOPDIR}/ccache/${PN}"
+#
+# Limit concurent jobs for a given recipe
+#
+#XCPNGDEV_BUILD_OPTS:append:pn-kernel = " --define '_smp_mflags -j3'"
+#
+# Fetch SRCREV from a local clone (no need to push every attempt)
+# (for recipes using xcp-ng-rpm class)
+#
+#SRC_URI:pn-xapi = "git://localhost/home/user/src/xcpng/rpms/${PN}/;protocol=file;nobranch=1"
+#SRC_URI:pn-build-env = "git://localhost/home/user/src/xcpng/build-env/;protocol=file;nobranch=1"

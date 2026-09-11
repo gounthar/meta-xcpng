@@ -233,7 +233,7 @@ CONF_VERSION = "2"
 # Set PRSERV_HOST to 'localhost:0' to automatically
 # start local PRService.
 # Set to other values to use remote PRService.
-#PRSERV_HOST = "localhost:0"
+PRSERV_HOST = "localhost:0"
 
 #
 # Disk space monitor, take action when the disk space or the amount of

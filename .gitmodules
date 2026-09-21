@@ -46,3 +46,6 @@
 [submodule "meta-xcpng/recipes-xcpng/kernel"]
 	path = meta-xcpng/recipes-xcpng/kernel-xcpng
 	url = https://github.com/xcp-ng-rpms/kernel.git
+[submodule "meta-xcpng/recipes-xcpng/xapi"]
+	path = meta-xcpng/recipes-xcpng/xapi
+	url = https://github.com/xcp-ng-rpms/xapi.git

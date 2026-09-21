@@ -43,3 +43,6 @@
 [submodule "meta-xcpng/recipes-xcpng/blktap"]
 	path = meta-xcpng/recipes-xcpng/blktap
 	url = https://github.com/xcp-ng-rpms/blktap.git
+[submodule "meta-xcpng/recipes-xcpng/kernel"]
+	path = meta-xcpng/recipes-xcpng/kernel-xcpng
+	url = https://github.com/xcp-ng-rpms/kernel.git

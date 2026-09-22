@@ -1,3 +1,3 @@
 inherit srpm-intree
 
-RDEPENDS:opam = "bubblewrap"
+RDEPENDS:opam = "bubblewrap m4"

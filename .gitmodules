@@ -49,3 +49,12 @@
 [submodule "meta-xcpng/recipes-xcpng/xapi"]
 	path = meta-xcpng/recipes-xcpng/xapi
 	url = https://github.com/xcp-ng-rpms/xapi.git
+[submodule "meta-xcpng/recipes-xcpng/edk2"]
+	path = meta-xcpng/recipes-xcpng/edk2
+	url = https://github.com/xcp-ng-rpms/edk2.git
+[submodule "meta-xcpng/recipes-xcpng/ipxe"]
+	path = meta-xcpng/recipes-xcpng/ipxe
+	url = https://github.com/xcp-ng-rpms/ipxe.git
+[submodule "meta-xcpng/recipes-xcpng/qemu"]
+	path = meta-xcpng/recipes-xcpng/qemu
+	url = https://github.com/xcp-ng-rpms/qemu.git

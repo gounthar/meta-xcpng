@@ -143,7 +143,7 @@ grep -E '^%{_libdir}/ocaml/' %{_builddir}/all.files | grep -vE '/dll[^/]*\.so$' 
 cat %{_builddir}/devel.files %{_builddir}/dom0-libs.files %{_builddir}/dom0-libs-devel.files \
     %{_builddir}/ocaml-libs.files %{_builddir}/ocaml-devel.files \
     | sort | comm -23 %{_builddir}/all.files - \
-    | grep -vE '^/boot/' > %{_builddir}/tools.files
+    | grep -vE '^/boot/|^%{python3_sitearch}/' > %{_builddir}/tools.files
 
 %files hypervisor
 /boot/xen-%{version}-%{release}
@@ -154,6 +154,8 @@ cat %{_builddir}/devel.files %{_builddir}/dom0-libs.files %{_builddir}/dom0-libs
 %files ocaml-libs -f %{_builddir}/ocaml-libs.files
 %files ocaml-devel -f %{_builddir}/ocaml-devel.files
 %files tools -f %{_builddir}/tools.files
+# Claimed by glob: byte-compiled .pyc files are added after %%install
+%{python3_sitearch}/*
 
 %changelog
 * Sat Oct 03 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261003.git9ede04b70e

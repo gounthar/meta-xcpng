@@ -129,6 +129,11 @@ cp %{SOURCE1} xen/build-rv64/.config
 export XEN_TARGET_ARCH=riscv64
 %{make_build} DESTDIR=%{buildroot} install-tools
 install -D -m 644 xen/build-rv64/xen %{buildroot}/boot/xen-%{version}-%{release}
+# As xen.spec does (%exclude): do not ship Xen's own OCaml xenstore and
+# xenbus libraries. They shadow the xs-opam xenstore that xapi builds
+# against (dune: Library "xenstore.unix" not found). oxenstored is a
+# native executable and has them linked in.
+rm -rf %{buildroot}%{_libdir}/ocaml/xenstore %{buildroot}%{_libdir}/ocaml/xenbus
 # Split the installed tree by pattern; everything not claimed goes to -tools
 cd %{buildroot}
 find . \( -type f -o -type l \) | sed 's|^\.||' | sort > %{_builddir}/all.files

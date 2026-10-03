@@ -11,7 +11,10 @@ Source0:	https://github.com/Cyan4973/xxHash/archive/v%{version}/%{name}-%{versio
 
 BuildRequires:	make
 BuildRequires:	gcc
+# riscv64: doxygen needs graphviz, unresolved in Kitten riscv64; no -doc there
+%ifnarch riscv64
 BuildRequires:	doxygen
+%endif
 
 %description
 xxHash is an Extremely fast Hash algorithm, running at RAM speed
@@ -42,6 +45,7 @@ Provides:	%{name}-static = %{version}-%{release}
 %description devel
 Development files for the xxhash library
 
+%ifnarch riscv64
 %package doc
 Summary:	Extremely fast hash algorithm - documentation files
 License:	BSD-2-Clause
@@ -49,6 +53,7 @@ BuildArch:	noarch
 
 %description doc
 Documentation files for the xxhash library
+%endif
 
 %prep
 %setup -q -n xxHash-%{version}
@@ -69,7 +74,9 @@ Documentation files for the xxhash library
     MOREFLAGS="%{__global_cflags} %{?__global_ldflags} %{moreflags_dispatch}" \
     DISPATCH=%{dispatch} \
     LIBXXH_DISPATCH=%{dispatch}
+%ifnarch riscv64
 doxygen
+%endif
 
 %install
 %make_install \
@@ -103,8 +110,10 @@ make test-xxhsum-c
 %{_libdir}/libxxhash.so
 %{_libdir}/pkgconfig/libxxhash.pc
 
+%ifnarch riscv64
 %files doc
 %doc doxygen/html
+%endif
 
 %changelog
 * Sat Sep 19 2026 Mattias Ellert <mattias.ellert@physics.uu.se> - 0.8.4-1

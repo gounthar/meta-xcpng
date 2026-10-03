@@ -11,6 +11,9 @@
 # dropped (not exercised yet, no VM started on that image); xenopsd-xc needs
 # zstd (its start-up check fails without it; xcp-networkd already requires
 # ethtool, missed there only because that test installed with --nodeps).
+# Round 3: forkexecd without dmidecode and kpatch (x86); xapi-core requires
+# openssh-server (xapi crash-looped without it) and dracut (an essential
+# executable it checks), and ships busybox=/usr/sbin/busybox in xapi.conf.d.
 # riscv64: XCP-ng patches 1001-1006 are already in this fork (it is based
 # on the XCP-ng xen-api tree); no patch is applied.
 # riscv64: no runtime Requires on sm, swtpm, emu-manager or qemu (x86 HVM
@@ -156,6 +159,8 @@ Requires: vhd-tool
 Requires: qcow-stream-tool
 Requires: libffi
 Requires: busybox
+Requires: openssh-server
+Requires: dracut
 Requires: iproute
 Requires: python3-six
 # Requires openssl for certificate and key pair management
@@ -466,8 +471,6 @@ developing applications that the XAPI IDL interface.
 Summary:        A subprocess management service
 BuildRequires:  xs-opam-repo
 BuildRequires:  systemd-devel
-Requires:       dmidecode
-Requires:       kpatch
 %{?systemd_requires}
 Obsoletes:      xapi-forkexecd <= 1.31.0-2
 
@@ -747,6 +750,9 @@ echo "ssh-auto-mode=false" | %{__install} -D -m 0644 /dev/stdin %{buildroot}%{_s
 %else
 %if ! 0%{?xcpng}
 echo "firewall-backend=firewalld" | %{__install} -D -m 0644 /dev/stdin %{buildroot}%{_sysconfdir}/xapi.conf.d/firewall-backend.conf
+# riscv64: busybox (the DHCP server) is in /usr/sbin, outside xapi's search-path
+echo "busybox=/usr/sbin/busybox" | %{__install} -D -m 0644 /dev/stdin %{buildroot}%{_sysconfdir}/xapi.conf.d/busybox.conf
+echo %{_sysconfdir}/xapi.conf.d/busybox.conf >> core-files
 %endif
 %endif
 

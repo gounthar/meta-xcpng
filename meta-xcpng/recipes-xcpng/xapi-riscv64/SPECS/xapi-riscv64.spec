@@ -5,6 +5,8 @@
 # tree builds against the RISC-V Xen 4.18 tree, xen-riscv64), and the
 # test suite skipped (hours under emulation). Experimental.
 %global rev 7547222e22
+# riscv64: XCP-ng patches 1001-1006 are already in this fork (it is based
+# on the XCP-ng xen-api tree); no patch is applied.
 # riscv64: no runtime Requires on sm, swtpm, emu-manager or qemu (x86 HVM
 # pieces, or not used by this stack); xen-dom0-tools is xen-tools here,
 # without the 4.13/4.20 version floors (the RISC-V Xen tree is 4.18).
@@ -85,15 +87,9 @@ Source27: xcpng-ntp.conf
 #   - Generated from our XAPI repository: https://github.com/xcp-ng/xen-api
 #   - git format-patch --no-numbered --no-signature v26.1.0..v26.1.0-8.3
 # Enables our additional sm drivers
-Patch1001: 0001-xcp-ng-configure-xapi.conf-to-meet-our-needs.patch
-Patch1002: 0002-xcp-ng-renamed-xs-clipboardd-to-xcp-clipboardd.patch
-Patch1003: 0003-xcp-ng-fix-IPv6-import.patch
 # check if https://github.com/xapi-project/xen-api/pull/4188 is fixed
-Patch1004: 0004-xcp-ng-open-close-openflow-port.patch
 # Drop this patch when we don't want to support migration from older SDN controller anymore
-Patch1005: 0005-xcp-ng-update-db-tunnel-protocol-from-other-config.patch
 # Drop this when the rsyslog configuration changes
-Patch1006: 0006-xcp-ng-do-not-change-rsyslog-configuration.patch
 
 # XS patches (present in v26.9.0)
 

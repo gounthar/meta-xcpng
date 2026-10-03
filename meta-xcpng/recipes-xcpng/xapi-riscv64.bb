@@ -2,3 +2,4 @@
 inherit srpm-intree
 SRPM_NAME = "xapi"
 SPECFILE = "SPECS/xapi-riscv64.spec"
+PACKAGES = ""

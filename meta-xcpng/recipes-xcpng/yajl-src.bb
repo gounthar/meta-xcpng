@@ -2,3 +2,4 @@
 # Kitten ships no riscv64 binary for it, and Xen's libxenlight needs it.
 inherit srpm-intree
 SRPM_NAME = "yajl"
+PACKAGES = "${SRPM_NAME}"

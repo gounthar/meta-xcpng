@@ -2,3 +2,4 @@
 # EPEL has no riscv64 tree, and xapi links libxxhash.
 inherit srpm-intree
 SRPM_NAME = "xxhash"
+PACKAGES = "${SRPM_NAME}"

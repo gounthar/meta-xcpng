@@ -11,7 +11,8 @@ Release: 1%{?xsrel}%{?dist}
 License: GPL
 Group: System/Hypervisor
 Source0: vncterm-10.2.2.tar.gz
-BuildRequires: xen-dom0-libs-devel systemd
+BuildRequires: xen-dom0-libs-devel
+BuildRequires: systemd
 BuildRequires: gcc
 %{?_cov_buildrequires}
 Requires(pre): shadow-utils

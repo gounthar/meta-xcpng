@@ -136,8 +136,10 @@ grep -E '^/usr/include/xen/' %{_builddir}/all.files > %{_builddir}/devel.files |
 grep -E '^%{_libdir}/lib[^/]*\.so\.' %{_builddir}/all.files > %{_builddir}/dom0-libs.files || :
 grep -E '^%{_libdir}/lib[^/]*\.(so|a)$|^%{_libdir}/pkgconfig/|^/usr/include/[^/]+\.h$|^/usr/include/xen(store|ctrl|guest)?[-_/]' %{_builddir}/all.files \
     | grep -vE '^/usr/include/xen/' > %{_builddir}/dom0-libs-devel.files || :
-grep -E '/ocaml/stublibs/' %{_builddir}/all.files > %{_builddir}/ocaml-libs.files || :
-grep -E '%{_libdir}/ocaml/' %{_builddir}/all.files | grep -v '/stublibs/' > %{_builddir}/ocaml-devel.files || :
+# ocamlfind installs each C stub (dll*_stubs.so) in its library's own
+# directory, not in a shared stublibs/
+grep -E '^%{_libdir}/ocaml/.*/dll[^/]*\.so$' %{_builddir}/all.files > %{_builddir}/ocaml-libs.files || :
+grep -E '^%{_libdir}/ocaml/' %{_builddir}/all.files | grep -vE '/dll[^/]*\.so$' > %{_builddir}/ocaml-devel.files || :
 cat %{_builddir}/devel.files %{_builddir}/dom0-libs.files %{_builddir}/dom0-libs-devel.files \
     %{_builddir}/ocaml-libs.files %{_builddir}/ocaml-devel.files \
     | sort | comm -23 %{_builddir}/all.files - \

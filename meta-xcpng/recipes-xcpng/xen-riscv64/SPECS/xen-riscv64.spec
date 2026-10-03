@@ -105,8 +105,15 @@ Dom0 tools: xl, xenstored, xenconsoled, xenguest and the rest.
 %build
 export XEN_TARGET_ARCH=riscv64
 export PYTHON=%{__python3}
+# --with-xenstored=xenstored: the default the upstream units launch
+# (launch-xenstore, XENSTORED in /etc/sysconfig/xencommons). In daemon
+# mode under systemd the unit waits for READY=1, which this oxenstored
+# never sends: xenstored.service fails with result 'protocol' and its
+# cgroup, oxenstored included, is killed. The C xenstored notifies.
+# oxenstored is still built and shipped.
 %configure --enable-ocamltools \
            --enable-systemd \
+           --with-xenstored=xenstored \
            --disable-seabios \
            --disable-stubdom \
            --disable-docs \
@@ -153,6 +160,9 @@ cat %{_builddir}/devel.files %{_builddir}/dom0-libs.files %{_builddir}/dom0-libs
     %{_builddir}/ocaml-libs.files %{_builddir}/ocaml-devel.files \
     | sort | comm -23 %{_builddir}/all.files - \
     | grep -vE '^/boot/|^%{python3_sitearch}/' > %{_builddir}/tools.files
+# Empty directories install-tools creates (/var/lib/xen for the libxl
+# lock file, /var/log/xen...): not matched by the file lists above
+find . -type d -empty | sed 's|^\.||' | grep -vE '^/boot' | sed 's|^|%%dir |' >> %{_builddir}/tools.files
 
 %files hypervisor
 /boot/xen-%{version}-%{release}
@@ -167,5 +177,9 @@ cat %{_builddir}/devel.files %{_builddir}/dom0-libs.files %{_builddir}/dom0-libs
 %{python3_sitearch}/*
 
 %changelog
+* Sun Oct 04 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261003.git9ede04b70e
+- Default to the C xenstored, which notifies systemd
+- Package the empty directories install-tools creates (/var/lib/xen)
+
 * Sat Oct 03 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261003.git9ede04b70e
 - First riscv64 build from the RISC-V Xen tree (experimental)

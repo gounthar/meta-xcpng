@@ -5,6 +5,12 @@
 # tree builds against the RISC-V Xen 4.18 tree, xen-riscv64), and the
 # test suite skipped (hours under emulation). Experimental.
 %global rev 7547222e22
+# riscv64, from the Kitten dom0 runtime test (2026-10-03): Requires on ssmtp,
+# dmv-utils, vmss, xs-presets, the zipkin exporter, fasteners, nbd,
+# iptables-legacy, jemalloc (only an LD_PRELOAD in the units) and openvswitch
+# dropped (not exercised yet, no VM started on that image); xenopsd-xc needs
+# zstd (its start-up check fails without it; xcp-networkd already requires
+# ethtool, missed there only because that test installed with --nodeps).
 # riscv64: XCP-ng patches 1001-1006 are already in this fork (it is based
 # on the XCP-ng xen-api tree); no patch is applied.
 # riscv64: no runtime Requires on sm, swtpm, emu-manager or qemu (x86 HVM
@@ -145,14 +151,12 @@ Requires: squeezed
 #Requires: xcp-featured
 Requires: initscripts
 Requires: hwdata
-Requires: /usr/sbin/ssmtp
 Requires: stunnel >= 5.55
 Requires: vhd-tool
 Requires: qcow-stream-tool
 Requires: libffi
 Requires: busybox
 Requires: iproute
-Requires: vmss
 Requires: python3-six
 # Requires openssl for certificate and key pair management
 Requires: openssl
@@ -179,7 +183,6 @@ Requires: libdnf5-plugin-xapitoken
 # For dnf plugins like config-manager
 Requires: dnf5-plugins
 %endif
-Requires: dmv-utils
 %endif
 Requires: python3-xcp-libs
 %if %{with python2_compat}
@@ -191,7 +194,6 @@ Requires: gmp
 # Requires: xapi-storage-plugins >= 2.0.0
 # Requires: xapi-clusterd >= 0.64.0
 Requires: xxhash-libs
-Requires: jemalloc >= 5
 Requires: zstd
 Requires: createrepo_c >= 0.10.0
 Requires: tdb-tools >= 1.3.18
@@ -199,13 +201,10 @@ Requires: samba-winbind >= 4.10.16
 # XCP-ng: don't require XS's fork of the setup RPM
 #Requires: setup >= 2.8.74
 Requires: xcp-ng-release-config
-Requires: python3-fasteners
 Requires: ipmitool
-Requires: python3-opentelemetry-exporter-zipkin
 %if 0%{?xenserver} >= 9
 %if 0%{?xcpng}
 # missing files prevent enabling firewalld
-Requires: iptables-legacy
 %else
 Requires: firewalld
 %endif
@@ -216,9 +215,6 @@ Requires: iptables-services
 %endif
 Requires: rsync
 Obsoletes: xapi-ssh-monitor <= 1.0.0
-Requires(post): xs-presets >= 1.3
-Requires(preun): xs-presets >= 1.3
-Requires(postun): xs-presets >= 1.3
 Provides: xapi-api-version = %{api_version_major}.%{api_version_minor}
 Provides: XS_FEATURE(OPENSSH_AUTO_MODE) = 1.0.0
 Conflicts: secureboot-certificates < 1.0.0-1
@@ -233,7 +229,6 @@ Requires: oxenstored >= 0.0.2
 Requires: kpatch
 
 # XCP-ng: add missing requires towards nbd
-Requires: nbd
 
 %description core
 This package contains the xapi toolstack.
@@ -318,17 +313,17 @@ developing applications that use xapi-libs.
 Summary:        Simple VM manager
 Requires:       message-switch >= 12.21.0
 Requires:       xen-tools
-Requires:       xen-dom0-libs >= 4.13.5-10.13
+Requires:       xen-dom0-libs
 
 # This dependency is required exclusively to ensure /dev/sm/* disks have
 # +r g=disk permissions
 
 Requires:       python3-scapy
-Requires:       jemalloc
 %description -n xenopsd
 Simple VM manager for the xapi toolstack.
 
 %package -n xenopsd-xc
+Requires: zstd
 Summary:        Xenopsd using xc
 Requires:       xenopsd = %{version}-%{release}
 Requires:       xen-hypervisor
@@ -343,7 +338,7 @@ Obsoletes:      ocaml-xenops-tools < 21.0.0-1
 %if 0%{?xenserver} >= 9
 # NUMA memory claims v2
 Requires:       xen-hypervisor >= 4.20.2-5
-Requires:       xen-dom0-libs >= 4.20.2-5
+Requires:       xen-dom0-libs
 Requires:       xen-tools
 Requires:       kernel >= 6.6.98-18
 %endif
@@ -399,15 +394,14 @@ developing applications that use xcp-rrdd.
 
 %package -n rrdd-plugins
 Summary:   RRDD metrics plugin
-Requires:  jemalloc
 Requires:  sysstat
 Requires:  xen-tools
 Requires:  xapi-rrd2csv
 # Requires Xen support for querying domain VCPU runnable and nonaffine running time
 %if 0%{?xenserver} < 9
-Requires:  xen-dom0-libs >= 4.17.5-18
+Requires:  xen-dom0-libs
 %else
-Requires:  xen-dom0-libs >= 4.19.2-12
+Requires:  xen-dom0-libs
 %endif
 
 %description -n rrdd-plugins
@@ -437,7 +431,6 @@ Requires: dhcp-client
 %else
 Requires: dhclient
 %endif
-Requires: openvswitch
 
 %description -n xcp-networkd
 Simple host networking management service for the xapi toolstack.
@@ -473,7 +466,6 @@ developing applications that the XAPI IDL interface.
 Summary:        A subprocess management service
 BuildRequires:  xs-opam-repo
 BuildRequires:  systemd-devel
-Requires:       jemalloc
 Requires:       dmidecode
 Requires:       kpatch
 %{?systemd_requires}
@@ -528,7 +520,6 @@ developing applications that use xapi-storage.
 
 %package storage-script
 Summary: Xapi storage script plugin server
-Requires:      jemalloc
 
 %description storage-script
 Allows script-based Xapi storage adapters.

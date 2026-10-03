@@ -47,6 +47,7 @@ BuildRequires: lz4-devel
 BuildRequires: ocaml
 BuildRequires: ocaml-findlib
 BuildRequires: ocaml-compiler-libs
+BuildRequires: systemd-devel
 
 %description
 The Xen hypervisor and its dom0 tools, built for riscv64 from the RISC-V
@@ -93,6 +94,8 @@ OCaml bindings to the Xen libraries (xenctrl, xenstore, eventchn, mmap...).
 Summary: Xen dom0 tools
 Requires: xen-dom0-libs = %{version}-%{release}
 Provides: xen-dom0-tools = %{version}-%{release}
+# xapi-core requires oxenstored; this package ships /usr/sbin/oxenstored
+Provides: oxenstored = %{version}-%{release}
 %description tools
 Dom0 tools: xl, xenstored, xenconsoled, xenguest and the rest.
 
@@ -103,6 +106,7 @@ Dom0 tools: xl, xenstored, xenconsoled, xenguest and the rest.
 export XEN_TARGET_ARCH=riscv64
 export PYTHON=%{__python3}
 %configure --enable-ocamltools \
+           --enable-systemd \
            --disable-seabios \
            --disable-stubdom \
            --disable-docs \

@@ -5,6 +5,9 @@
 # tree builds against the RISC-V Xen 4.18 tree, xen-riscv64), and the
 # test suite skipped (hours under emulation). Experimental.
 %global rev 7547222e22
+# riscv64: no runtime Requires on sm, swtpm, emu-manager or qemu (x86 HVM
+# pieces, or not used by this stack); xen-dom0-tools is xen-tools here,
+# without the 4.13/4.20 version floors (the RISC-V Xen tree is 4.18).
 %global package_speccommit 9b06d1a01d5d82a4885021a88cee7d07be5e0514
 %global package_srccommit v26.4.0
 
@@ -201,7 +204,6 @@ Requires: samba-winbind >= 4.10.16
 #Requires: setup >= 2.8.74
 Requires: xcp-ng-release-config
 Requires: python3-fasteners
-Requires: sm
 Requires: ipmitool
 Requires: python3-opentelemetry-exporter-zipkin
 %if 0%{?xenserver} >= 9
@@ -319,18 +321,14 @@ developing applications that use xapi-libs.
 %package -n xenopsd
 Summary:        Simple VM manager
 Requires:       message-switch >= 12.21.0
-Requires:       xen-dom0-tools >= 4.13.5-10.53
+Requires:       xen-tools
 Requires:       xen-dom0-libs >= 4.13.5-10.13
 
 # This dependency is required exclusively to ensure /dev/sm/* disks have
 # +r g=disk permissions
-Requires:       sm >= 3.0.12-2
 
 Requires:       python3-scapy
 Requires:       jemalloc
-Requires:       swtpm >= 0.7.3-4
-Requires:       swtpm-tools
-
 %description -n xenopsd
 Simple VM manager for the xapi toolstack.
 
@@ -341,18 +339,16 @@ Requires:       xen-hypervisor
 Requires:       forkexecd
 Requires:       xcp-networkd
 Requires:       xen-libs
-Requires:       emu-manager
 # NVME support requires newer qemu
 # Describe minimum qemu version required.
 # If a new major/incompatible version of qemu is released then it will need to:
 # Conflicts: xenopsd-xc < $current_version
-Requires:       qemu >= %{qemu_epoch}:4.2.1-5.0.0
 Obsoletes:      ocaml-xenops-tools < 21.0.0-1
 %if 0%{?xenserver} >= 9
 # NUMA memory claims v2
 Requires:       xen-hypervisor >= 4.20.2-5
 Requires:       xen-dom0-libs >= 4.20.2-5
-Requires:       xen-dom0-tools >= 4.20.2-5
+Requires:       xen-tools
 Requires:       kernel >= 6.6.98-18
 %endif
 
@@ -409,7 +405,7 @@ developing applications that use xcp-rrdd.
 Summary:   RRDD metrics plugin
 Requires:  jemalloc
 Requires:  sysstat
-Requires:  xen-dom0-tools
+Requires:  xen-tools
 Requires:  xapi-rrd2csv
 # Requires Xen support for querying domain VCPU runnable and nonaffine running time
 %if 0%{?xenserver} < 9

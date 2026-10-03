@@ -115,9 +115,10 @@ BuildRequires: systemd-devel
 BuildRequires: pciutils-devel
 BuildRequires: xen-dom0-libs-devel
 BuildRequires: xxhash-devel
-BuildRequires: sm
+# riscv64: no BuildRequires on sm and blktap-devel. Nothing in the build
+# uses sm, and read-blktap-stats is pure OCaml; both would pull the Python
+# storage manager and tapdisk, which this RISC-V stack does not use.
 BuildRequires: xen-ocaml-devel
-BuildRequires: blktap-devel
 BuildRequires: openssl-devel
 
 %description

@@ -1,7 +1,8 @@
 # riscv64 copy of xcp-ng-rpms/xcp-python-libs (8aaa32b) for meta-xcpng on
 # AlmaLinux Kitten. Changes: no biosdevname Require (Kitten builds it for
 # x86_64 only; what xcp loses without it on riscv64 is untested), and static
-# BuildRequires in place of %generate_buildrequires.
+# BuildRequires in place of %generate_buildrequires, and no python2.7
+# compat symlink for updategrub.py.
 %global package_speccommit 6c1f27d802c1e16edbea1e516ae7ffb36e179dd9
 %global usver 3.0.10
 %global xsver 1
@@ -71,9 +72,8 @@ sed -i "s/dynamic *= *\[\"version\"\]/version = \"%{version}\"/g" pyproject.toml
 
 install -m 0775 -d %{buildroot}/opt/xensource/bin
 install -m 0775 %{SOURCE1} %{buildroot}/opt/xensource/bin/updategrub.py
-# compat symlink
-mkdir -p %{buildroot}/usr/lib/python2.7/site-packages/xcp
-ln -sr %{buildroot}/opt/xensource/bin/updategrub.py %{buildroot}/usr/lib/python2.7/site-packages/xcp/updategrub.py
+# No python2.7 compat symlink on riscv64: brp-python-bytecompile then
+# needs a python2.7 interpreter, and Kitten has none
 
 %check
 %if %{with test}
@@ -89,7 +89,6 @@ cd tests
 %{python3_sitelib}/python_libs-*
 %{python3_sitelib}/xcp
 /opt/xensource/bin/updategrub.py
-/usr/lib/python2.7/site-packages/xcp/updategrub.py
 
 %changelog
 * Sun Oct 04 2026 Bruno Verachten <gounthar@gmail.com> - 3.0.10-1.1.riscv64

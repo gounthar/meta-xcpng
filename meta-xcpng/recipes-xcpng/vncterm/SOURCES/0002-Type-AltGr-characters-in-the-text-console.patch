@@ -1,0 +1,110 @@
+From c77754eb2e2a3f352a1015d9ea64a2aff3f86772 Mon Sep 17 00:00:00 2001
+From: Bruno Verachten <gounthar@gmail.com>
+Date: Sun, 4 Oct 2026 19:35:58 +0200
+Subject: [PATCH 2/2] Type AltGr characters in the text console
+
+On layouts with a third level (AZERTY: | \ { } [ ] @ # ~), AltGr
+characters never reached the terminal. The keymap maps
+ISO_Level3_Shift and Mode_switch to the Right Alt scancode, so the text
+console treated AltGr as Alt and sent ESC before the character. Browsers
+on Windows report AltGr as Ctrl+Alt, and the Ctrl modifier also masked
+the character: AltGr+6 arrived as ESC then 0x1c, Ctrl-\, the terminal's
+quit character.
+
+AltGr now sets its own state instead of Right Alt, and a non-letter
+printable character typed with AltGr, or with Ctrl and Alt together, is
+sent as itself. Letters keep the old meaning: Ctrl+Alt+x is still ESC
+then Ctrl-x.
+
+Tested with an RFB client driving vncterm, whose command recorded the
+bytes reaching its pty (riscv64, the en-us keymap the dom0 ships):
+
+  keys                        before    after
+  |                           7c        7c
+  ISO_Level3_Shift + |        1b 7c     7c
+  Control_L + Alt_R + |       1b 1c     7c
+  ISO_Level3_Shift + {        1b 7b     7b
+  Control_L + c               03        03
+  Alt_L + x                   1b 78     1b 78
+  Control_L + Alt_L + x       1b 18     1b 18
+
+Signed-off-by: Bruno Verachten <gounthar@gmail.com>
+---
+ libvnc/vnc.c | 29 +++++++++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
+
+diff --git a/libvnc/vnc.c b/libvnc/vnc.c
+index c929932..141dc6d 100644
+--- a/libvnc/vnc.c
++++ b/libvnc/vnc.c
+@@ -163,6 +163,7 @@ struct VncState
+ 
+     /* input */
+     uint8_t modifiers_state[256];
++    int altgr;                  /* ISO_Level3_Shift or Mode_switch held */
+ 
+     int send_resize;
+ 
+@@ -1232,10 +1233,29 @@ static void press_key(VncState *vs, int keysym)
+     vs->ds->kbd_put_keycode(keysym2scancode(vs->kbd_layout, keysym) | 0x80);
+ }
+ 
++/* A character a keyboard layout puts on its third level: | \ { } [ ] @ #
++   ~ on AZERTY. Letters are left out, so Ctrl+Alt+letter keeps meaning
++   ESC then Ctrl-letter. */
++static int is_altgr_char(uint32_t sym)
++{
++    if ((sym >= 'a' && sym <= 'z') || (sym >= 'A' && sym <= 'Z'))
++        return 0;
++    return (sym >= 0x20 && sym <= 0x7e) || (sym >= 0xa0 && sym <= 0xff);
++}
++
+ static void do_key_event(VncState *vs, int down, uint32_t sym)
+ {
+     int keycode;
+ 
++    /* AltGr is a third shift level, not Alt. The keymap maps
++       ISO_Level3_Shift and Mode_switch to the Right Alt scancode, which
++       made the text console send ESC before every AltGr character. */
++    if (!vs->ds->graphic_mode &&
++        ((sym & 0xFFFF) == 0xfe03 || (sym & 0xFFFF) == 0xff7e)) {
++        vs->altgr = down;
++        return;
++    }
++
+     keycode = keysym2scancode(vs->kbd_layout, sym & 0xFFFF);
+ 
+     /* QEMU console switch */
+@@ -1294,6 +1314,11 @@ static void do_key_event(VncState *vs, int down, uint32_t sym)
+         /* QEMU console emulation */
+         if (down) {
+ 	    int mod = 0;
++	    int ctrl = vs->modifiers_state[0x1d] || vs->modifiers_state[0x9d];
++	    int alt = vs->modifiers_state[0x38] || vs->modifiers_state[0xb8];
++	    /* The character itself, unmodified: typed with AltGr, or with
++	       Ctrl+Alt, which is how browsers on Windows report AltGr */
++	    int altgr_char = is_altgr_char(sym) && (vs->altgr || (ctrl && alt));
+ 	    if (vs->modifiers_state[0x1d] || vs->modifiers_state[0x9d])
+ 		mod += QEMU_KEY_MOD_CTRL;
+ 	    if (vs->modifiers_state[0x36] || vs->modifiers_state[0x2a])
+@@ -1310,7 +1335,7 @@ static void do_key_event(VncState *vs, int down, uint32_t sym)
+             }
+ 
+             /* When ALT is held down, send an ESC first */
+-            if (vs->modifiers_state[0x38] || vs->modifiers_state[0xb8])
++            if (alt && !altgr_char)
+                 vs->ds->kbd_put_keysym('\033');
+             switch (keycode) {
+             case 0xc8:
+@@ -1341,7 +1366,7 @@ static void do_key_event(VncState *vs, int down, uint32_t sym)
+                 vs->ds->kbd_put_keysym(QEMU_KEY_PAGEDOWN + mod);
+                 break;
+             default:
+-		if (vs->modifiers_state[0x1d] || vs->modifiers_state[0x9d])
++		if (ctrl && !altgr_char)
+ 		    sym &= 0x1f;
+                 vs->ds->kbd_put_keysym(sym);
+                 break;
+-- 
+2.55.0
+

@@ -3,16 +3,18 @@
 # provides), and BuildRequires xen-dom0-libs-devel, the package that
 # provides xen-libs-devel in xen-riscv64 (BitBake does not map Provides:).
 # Patch0 adds -g/--geometry COLSxLINES; the default stays 80x24.
+# Patch1 lets AltGr characters (AZERTY | \ { } [ ] @ # ~) reach the text console.
 %global package_speccommit da356c77e70ef4ff96579e1e077b452ed85af5e9
 %global package_srccommit v10.2.2
 Summary: vncterm tty to vnc utility
 Name: vncterm
 Version: 10.2.2
-Release: 2%{?xsrel}%{?dist}
+Release: 3%{?xsrel}%{?dist}
 License: GPL
 Group: System/Hypervisor
 Source0: vncterm-10.2.2.tar.gz
 Patch0: 0001-Add-geometry-to-set-the-terminal-size.patch
+Patch1: 0002-Type-AltGr-characters-in-the-text-console.patch
 BuildRequires: xen-dom0-libs-devel
 BuildRequires: systemd
 BuildRequires: gcc
@@ -81,6 +83,9 @@ grep -xq 'pts/0' /etc/securetty || echo 'pts/0' >>/etc/securetty
 %{?_cov_results_package}
 
 %changelog
+* Sun Oct 04 2026 Bruno Verachten <gounthar@gmail.com> - 10.2.2-3
+- Type AltGr characters in the text console (| and friends on AZERTY)
+
 * Sun Oct 04 2026 Bruno Verachten <gounthar@gmail.com> - 10.2.2-2
 - Add -g/--geometry to set the terminal size (default unchanged, 80x24)
 

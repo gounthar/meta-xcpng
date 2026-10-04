@@ -9,14 +9,14 @@
 # it is. Package names follow xen.spec, so that xapi's BuildRequires
 # (xen-devel, xen-dom0-libs-devel, xen-ocaml-devel) resolve.
 
-%global rev 9ede04b70e
+%global rev 0ef4cdf884
 # First build: no debuginfo, find-debuginfo would also process the
 # hypervisor image in /boot
 %global debug_package %{nil}
 
 Name:    xen
 Version: 4.18.0
-Release: 0.riscv64.20261003.git%{rev}%{?dist}
+Release: 0.riscv64.20261004.git%{rev}%{?dist}
 Summary: Xen hypervisor and tools (RISC-V port, experimental)
 License: GPL-2.0-only AND LGPL-2.1-only AND MIT AND BSD-2-Clause
 URL:     https://gitlab.com/xen-project/people/baptleduc/xen
@@ -177,6 +177,9 @@ find . -type d -empty | sed 's|^\.||' | grep -vE '^/boot' | sed 's|^|%%dir |' >>
 %{python3_sitearch}/*
 
 %changelog
+* Sun Oct 04 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261004.git0ef4cdf884
+- this_cpu_ptr() uses the per-CPU offset (grant-table panic under network load)
+
 * Sun Oct 04 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261003.git9ede04b70e
 - Default to the C xenstored, which notifies systemd
 - Package the empty directories install-tools creates (/var/lib/xen)

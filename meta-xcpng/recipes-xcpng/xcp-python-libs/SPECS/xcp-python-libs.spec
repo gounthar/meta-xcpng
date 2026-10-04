@@ -1,6 +1,6 @@
 # riscv64 copy of xcp-ng-rpms/xcp-python-libs (8aaa32b) for meta-xcpng on
 # AlmaLinux Kitten. Changes: no biosdevname Require (Kitten builds it for
-# x86_64 only; xcp's NIC naming falls back without it), and static
+# x86_64 only; what xcp loses without it on riscv64 is untested), and static
 # BuildRequires in place of %generate_buildrequires.
 %global package_speccommit 6c1f27d802c1e16edbea1e516ae7ffb36e179dd9
 %global usver 3.0.10
@@ -26,7 +26,10 @@ Group: Applications/System
 BuildArch: noarch
 
 Obsoletes: xcp-python-libs-incloudsphere
-BuildRequires: python3-devel python3-setuptools python3-pip
+# One per line: meta-xcpng splits BuildRequires on commas only
+BuildRequires: python3-devel
+BuildRequires: python3-setuptools
+BuildRequires: python3-pip
 
 %if 0%{?xenserver} >= 9
 BuildRequires: pyproject-rpm-macros

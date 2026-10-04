@@ -11,6 +11,8 @@
 # dropped (not exercised yet, no VM started on that image); xenopsd-xc needs
 # zstd (its start-up check fails without it; xcp-networkd already requires
 # ethtool, missed there only because that test installed with --nodeps).
+# Round 4: busybox.conf really shipped (it sat in a non-XCP-ng branch);
+# xen-backend.rules emptied (it undid xenopsd's own vif hotplug).
 # Round 3: forkexecd without dmidecode and kpatch (x86); xapi-core requires
 # openssh-server (xapi crash-looped without it) and dracut (an essential
 # executable it checks), and ships busybox=/usr/sbin/busybox in xapi.conf.d.
@@ -750,11 +752,16 @@ echo "ssh-auto-mode=false" | %{__install} -D -m 0644 /dev/stdin %{buildroot}%{_s
 %else
 %if ! 0%{?xcpng}
 echo "firewall-backend=firewalld" | %{__install} -D -m 0644 /dev/stdin %{buildroot}%{_sysconfdir}/xapi.conf.d/firewall-backend.conf
+%endif
+%endif
+
 # riscv64: busybox (the DHCP server) is in /usr/sbin, outside xapi's search-path
 echo "busybox=/usr/sbin/busybox" | %{__install} -D -m 0644 /dev/stdin %{buildroot}%{_sysconfdir}/xapi.conf.d/busybox.conf
 echo %{_sysconfdir}/xapi.conf.d/busybox.conf >> core-files
-%endif
-%endif
+# riscv64: xenopsd runs its own vif hotplug script (run_hotplug_scripts),
+# and this rule's /usr/libexec/xenopsd/vif, which needs setup-vif-rules
+# and openvswitch, then takes the vif down again. Ship the rule empty.
+echo "# xen-backend vif rule disabled on riscv64: xenopsd runs the hotplug script" > %{buildroot}%{_sysconfdir}/udev/rules.d/xen-backend.rules
 
 mkdir -p %{buildroot}%{_sysconfdir}/xapi.pool-recommendations.d
 %{__install} -D -m 0644 %{SOURCE20} %{buildroot}%{_sysconfdir}/xapi.pool-recommendations.d/xapi.conf

@@ -2,15 +2,17 @@
 # model on RISC-V; vncterm still needs a qemu en-us keymap, which the dom0
 # provides), and BuildRequires xen-dom0-libs-devel, the package that
 # provides xen-libs-devel in xen-riscv64 (BitBake does not map Provides:).
+# Patch0 adds -g/--geometry COLSxLINES; the default stays 80x24.
 %global package_speccommit da356c77e70ef4ff96579e1e077b452ed85af5e9
 %global package_srccommit v10.2.2
 Summary: vncterm tty to vnc utility
 Name: vncterm
 Version: 10.2.2
-Release: 1%{?xsrel}%{?dist}
+Release: 2%{?xsrel}%{?dist}
 License: GPL
 Group: System/Hypervisor
 Source0: vncterm-10.2.2.tar.gz
+Patch0: 0001-Add-geometry-to-set-the-terminal-size.patch
 BuildRequires: xen-dom0-libs-devel
 BuildRequires: systemd
 BuildRequires: gcc
@@ -79,6 +81,9 @@ grep -xq 'pts/0' /etc/securetty || echo 'pts/0' >>/etc/securetty
 %{?_cov_results_package}
 
 %changelog
+* Sun Oct 04 2026 Bruno Verachten <gounthar@gmail.com> - 10.2.2-2
+- Add -g/--geometry to set the terminal size (default unchanged, 80x24)
+
 * Fri Aug 30 Lin Liu <Lin.Liu01@cloud.com> - 10.2.2-1
 - CP-50733: Fix misleading-indentation
 

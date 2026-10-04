@@ -1,0 +1,95 @@
+From c1c68b7c7f925c5d166a9667048b63428891b07d Mon Sep 17 00:00:00 2001
+From: Bruno Verachten <gounthar@gmail.com>
+Date: Sun, 4 Oct 2026 15:53:24 +0200
+Subject: [PATCH] Add --geometry to set the terminal size
+
+The terminal was fixed at 80x24 by two #defines. A console that needs
+more room (xentop on a host console) had no way to get it. -g COLSxLINES
+sets both the pty window size and the framebuffer; the default stays
+80x24, so nothing changes without the option. A VNC client that scales
+to its window shows the larger grid with smaller characters.
+
+Tested on a riscv64 dom0 (XCP-ng 8.99 RPM set on AlmaLinux Kitten,
+under QEMU): with -g 160x50 the console's pty reports "50 160".
+
+Signed-off-by: Bruno Verachten <gounthar@gmail.com>
+---
+ main.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
+
+diff --git a/main.c b/main.c
+index 707f966..e6e2766 100644
+--- a/main.c
++++ b/main.c
+@@ -63,8 +63,9 @@
+ #include "libvnc/libvnc.h"
+ #include "libvnc/libtextterm.h"
+ 
+-#define LINES	24
+-#define COLS	80
++/* Terminal size in characters, set with --geometry */
++static int term_lines = 24;
++static int term_cols = 80;
+ 
+ #define FONTH	16
+ #define FONTW	8
+@@ -288,8 +289,8 @@ run_process(CharDriverState *console, TextDisplayState *tds, mode_t mask,
+     p->console = console;
+     p->tds = tds;
+ 
+-    ws.ws_row = LINES;
+-    ws.ws_col = COLS;
++    ws.ws_row = term_lines;
++    ws.ws_col = term_cols;
+     ws.ws_xpixel = ws.ws_col * FONTW;
+     ws.ws_ypixel = ws.ws_row * FONTH;
+ 
+@@ -622,6 +623,7 @@ static void usage(FILE *f)
+         "Provide VNC server from a terminal.\n"
+         "\n"
+         "  -c, --cmd             enable command mode, execute a given command\n"
++        "  -g, --geometry=COLSxLINES  terminal size in characters (default 80x24)\n"
+         "  -h, --help            print this help\n"
+         "  -l, --loadstate=FILE  load state from a file\n"
+         "  -p, --pty=PTY         connect to a given pty\n"
+@@ -689,10 +691,11 @@ main(int argc, char **argv, char **envp)
+             {"loadstate", 1, 0, 'l'},
+             {"text", 0, 0, 'T'},
+             {"help", 0, 0, 'h'},
++            {"geometry", 1, 0, 'g'},
+ 	    {0, 0, 0, 0}
+ 	};
+ 
+-	c = getopt_long(argc, argv, "+cp:rst:x:v:SV::l:Th", long_options, NULL);
++	c = getopt_long(argc, argv, "+cp:rst:x:v:SV::l:Thg:", long_options, NULL);
+ 	if (c == -1)
+ 	    break;
+ 
+@@ -741,6 +744,15 @@ main(int argc, char **argv, char **envp)
+         case 'h':
+             usage(stdout);
+             return 0;
++        case 'g':
++            if (sscanf(optarg, "%dx%d", &term_cols, &term_lines) != 2 ||
++                term_cols < 20 || term_cols > 512 ||
++                term_lines < 10 || term_lines > 256) {
++                fprintf(stderr, "vncterm: bad geometry '%s', want COLSxLINES\n",
++                        optarg);
++                return 1;
++            }
++            break;
+         case '?':
+             usage(stderr);
+             return 1;
+@@ -802,7 +814,7 @@ main(int argc, char **argv, char **envp)
+     sat.sin_port = sa.sin_port;
+ 
+     display = vnc_display_init(ds, (struct sockaddr *)&sa, 1, title, NULL, 
+-		COLS * FONTW, LINES * FONTH );
++		term_cols * FONTW, term_lines * FONTH );
+     vncterm->console = text_console_init(ds);
+ 
+     if (enable_textterm) {
+-- 
+2.55.0
+

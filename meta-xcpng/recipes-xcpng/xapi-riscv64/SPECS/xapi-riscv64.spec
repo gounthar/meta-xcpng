@@ -11,6 +11,9 @@
 # dropped (not exercised yet, no VM started on that image); xenopsd-xc needs
 # zstd (its start-up check fails without it; xcp-networkd already requires
 # ethtool, missed there only because that test installed with --nodeps).
+# Round 5: xenopsd-xc without the x86 xen-hypervisor >= 4.20.2-5 floor
+# (ours is 4.18); xcp-networkd without bridge-utils (EL dropped it,
+# bridges are made with ip) and dhcp-client (see its package).
 # Round 4: busybox.conf really shipped (it sat in a non-XCP-ng branch);
 # xen-backend.rules emptied (it undid xenopsd's own vif hotplug).
 # Round 3: forkexecd without dmidecode and kpatch (x86); xapi-core requires
@@ -344,7 +347,6 @@ Requires:       xen-libs
 Obsoletes:      ocaml-xenops-tools < 21.0.0-1
 %if 0%{?xenserver} >= 9
 # NUMA memory claims v2
-Requires:       xen-hypervisor >= 4.20.2-5
 Requires:       xen-dom0-libs
 Requires:       xen-tools
 Requires:       kernel >= 6.6.98-18
@@ -432,9 +434,9 @@ Requires: ethtool
 Requires: libnl3
 # XCP-ng: remove Requires to proprietary component
 # Requires: pvsproxy
-Requires: bridge-utils
 %if 0%{?xcpng}
-Requires: dhcp-client
+# riscv64: no dhcp-client (dhclient is gone in EL10, Kitten has dhcpcd).
+# A DHCP management PIF needs it or a dhcpcd port; a static one does not.
 %else
 Requires: dhclient
 %endif

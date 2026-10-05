@@ -1,0 +1,83 @@
+From 7de21541ed5b0b7ce64089a789c79c9f6ff91ed9 Mon Sep 17 00:00:00 2001
+From: Julian Vetter <julian.vetter@vates.tech>
+Date: Fri, 25 Sep 2026 11:27:51 +0200
+Subject: [PATCH] xenpv: give display frontends a console to bind to for xenfb
+
+With -machine xenpv -vga xenfb, the xenfb backend only creates its
+graphic console once the guest frontend connects. VNC (and the other
+display frontends) pick their console in qemu_init_displays(), after
+machine init, find none and stay bound to nothing: the client only ever
+sees "This VM has no graphic display device." and has to switch consoles
+manually (Ctrl+Alt+1).
+
+Add graphic_console_create_placeholder(), which creates an unused
+graphic console, and call it from the xenpv machine when xenfb is
+configured. Display frontends bind to it. Then xenfb takes it via
+qemu_graphic_console_lookup_unused() in graphic_console_init().
+
+Signed-off-by: Julian Vetter <julian.vetter@vates.tech>
+---
+ hw/xenpv/xen_machine_pv.c |  2 ++
+ include/ui/console.h      |  1 +
+ ui/console.c              | 13 +++++++++++++
+ 3 files changed, 16 insertions(+)
+
+diff --git a/hw/xenpv/xen_machine_pv.c b/hw/xenpv/xen_machine_pv.c
+index 99c02492ef..d958a00cd9 100644
+--- a/hw/xenpv/xen_machine_pv.c
++++ b/hw/xenpv/xen_machine_pv.c
+@@ -29,6 +29,7 @@
+ #include "hw/xen/xen-bus.h"
+ #include "system/block-backend.h"
+ #include "system/system.h"
++#include "ui/console.h"
+ 
+ static void xen_init_pv(MachineState *machine)
+ {
+@@ -54,6 +55,7 @@ static void xen_init_pv(MachineState *machine)
+     if (vga_interface_type == VGA_XENFB) {
+         xen_config_dev_vfb(0, "vnc");
+         xen_config_dev_vkbd(0);
++        graphic_console_create_placeholder();
+         vga_interface_created = true;
+     }
+ 
+diff --git a/include/ui/console.h b/include/ui/console.h
+index 98feaa58bd..ebf7591b42 100644
+--- a/include/ui/console.h
++++ b/include/ui/console.h
+@@ -380,6 +380,7 @@ void graphic_console_set_hwops(QemuConsole *con,
+                                const GraphicHwOps *hw_ops,
+                                void *opaque);
+ void graphic_console_close(QemuConsole *con);
++QemuConsole *graphic_console_create_placeholder(void);
+ 
+ void graphic_hw_update(QemuConsole *con);
+ void graphic_hw_update_done(QemuConsole *con);
+diff --git a/ui/console.c b/ui/console.c
+index a5d5dcdd0d..cf329280f3 100644
+--- a/ui/console.c
++++ b/ui/console.c
+@@ -1225,6 +1225,19 @@ void graphic_console_close(QemuConsole *con)
+     dpy_gfx_replace_surface(con, surface);
+ }
+ 
++QemuConsole *graphic_console_create_placeholder(void)
++{
++    static const char noinit[] =
++        "Guest has not initialized the display (yet).";
++    QemuConsole *con;
++
++    con = (QemuConsole *)object_new(TYPE_QEMU_GRAPHIC_CONSOLE);
++    graphic_console_set_hwops(con, &unused_ops, NULL);
++    dpy_gfx_replace_surface(con,
++                            qemu_create_placeholder_surface(640, 480, noinit));
++    return con;
++}
++
+ QemuConsole *qemu_console_lookup_default(void)
+ {
+     QemuConsole *con;
+-- 
+2.53.0
+

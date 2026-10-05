@@ -1,0 +1,28 @@
+From d01c55eb3e4d36bcfc85a2f16136e992159ed44b Mon Sep 17 00:00:00 2001
+From: Julian Vetter <julian.vetter@vates.tech>
+Date: Fri, 25 Sep 2026 10:35:04 +0200
+Subject: [PATCH] xenpv: build the xenpv machine again
+
+xen_machine_pv.c is only compiled when CONFIG_XEN_PV is set. But this
+config can't be enabled via ./configure or Meson and on ARM
+qemu-system-i386 -M xenpv is used as the userspace PV backend (e.g.
+xenfb/vkbd for a graphical console). So, make the file depend on the
+CONFIG_XEN flag instead.
+
+Signed-off-by: Julian Vetter <julian.vetter@vates.tech>
+---
+ hw/xenpv/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hw/xenpv/meson.build b/hw/xenpv/meson.build
+index 746ffd146e..40f911ac15 100644
+--- a/hw/xenpv/meson.build
++++ b/hw/xenpv/meson.build
+@@ -1,3 +1,3 @@
+ xenpv_ss = ss.source_set()
+ 
+-xenpv_ss.add(when: 'CONFIG_XEN_PV', if_true: files('xen_machine_pv.c'))
++xenpv_ss.add(when: 'CONFIG_XEN', if_true: files('xen_machine_pv.c'))
+-- 
+2.53.0
+

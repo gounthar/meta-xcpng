@@ -1,0 +1,38 @@
+From 9d4c0ac0055cd8c9cc571f5956fd911de68001db Mon Sep 17 00:00:00 2001
+From: Julian Vetter <julian.vetter@vates.tech>
+Date: Fri, 25 Sep 2026 11:23:10 +0200
+Subject: [PATCH] xen-legacy-backend: make xen-backend devices hotpluggable
+ again
+
+Since commit 250e797cea ("hw/xen: Have legacy Xen backend inherit from
+DYNAMIC_SYS_BUS_DEVICE") the xen-backend type inherits hotpluggable =
+false from TYPE_DYNAMIC_SYS_BUS_DEVICE. Legacy backends (e.g. vfb/vkbd
+with -machine xenpv) are instantiated from xenstore watches once the
+machine is ready, so they are flagged as hotplugged and realize fails
+with:
+
+  Device 'xen-backend' does not support hotplugging
+
+The xen-sysbus already has a hotplug handler, so allow hotplug on the
+device class again.
+
+Signed-off-by: Julian Vetter <julian.vetter@vates.tech>
+---
+ hw/xen/xen-legacy-backend.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/hw/xen/xen-legacy-backend.c b/hw/xen/xen-legacy-backend.c
+index 5ed53f8943..0fbdd7d3d1 100644
+--- a/hw/xen/xen-legacy-backend.c
++++ b/hw/xen/xen-legacy-backend.c
+@@ -641,6 +641,7 @@ static void xendev_class_init(ObjectClass *klass, const void *data)
+ 
+     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
+     dc->bus_type = TYPE_XENSYSBUS;
++    dc->hotpluggable = true;
+ }
+ 
+ static const TypeInfo xendev_type_info = {
+-- 
+2.53.0
+

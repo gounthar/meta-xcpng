@@ -1,0 +1,23 @@
+From: Bruno Verachten <gounthar@gmail.com>
+Subject: [PATCH] meson: build the Xen accelerator on riscv64 hosts
+
+Xen targets are only listed for x86, arm and aarch64 hosts, so a
+riscv64 build with --enable-xen silently has no Xen support. Use the
+i386 emulator for its xenpv machine, as on arm, so qemu-system-i386
+-M xenpv can serve PV backends (xenfb/vkbd) in a riscv64 dom0.
+
+Signed-off-by: Bruno Verachten <gounthar@gmail.com>
+---
+diff --git a/meson.build b/meson.build
+--- a/meson.build
++++ b/meson.build
+@@ -320,6 +320,9 @@
+ elif cpu == 'aarch64'
+   # i386 emulator provides xenpv machine type for multiple architectures
+   xen_targets = ['i386-softmmu', 'x86_64-softmmu', 'aarch64-softmmu']
++elif cpu == 'riscv64'
++  # i386 emulator provides xenpv machine type for multiple architectures
++  xen_targets = ['i386-softmmu']
+ else
+   xen_targets = []
+ endif

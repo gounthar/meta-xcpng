@@ -1,16 +1,19 @@
 # riscv64 build of xapi from the RISC-V xen-api fork (Baptiste Le Duc,
 # github.com/baptleduc/xen-api, branch riscv) plus the gounthar/xcpng-riscv64
-# rrdp patches, at 03c55f9817. Copy of xapi.spec with: that source, the
+# rrdp and xenopsd patches, at e9373d4804. Copy of xapi.spec with: that source, the
 # x86 qemu-wrapper patches and the Xen 4.21 API patches dropped (this
 # tree builds against the RISC-V Xen 4.18 tree, xen-riscv64), and the
 # test suite skipped (hours under emulation). Experimental.
-%global rev 03c55f9817
+%global rev e9373d4804
 # riscv64, from the Kitten dom0 runtime test (2026-10-03): Requires on ssmtp,
 # dmv-utils, vmss, xs-presets, the zipkin exporter, fasteners, nbd,
 # iptables-legacy, jemalloc (only an LD_PRELOAD in the units) and openvswitch
 # dropped (not exercised yet, no VM started on that image); xenopsd-xc needs
 # zstd (its start-up check fails without it; xcp-networkd already requires
 # ethtool, missed there only because that test installed with --nodeps).
+# Round 11: source at e9373d4804, xenopsd sets the backend Closing on a
+# forced unplug (blkback never reached Closed, so force shutdown sat
+# out the 300 s hotplug timeout; gounthar/xcpng-riscv64 #90).
 # Round 6: source at 03c55f9817, rrdp-netdev uses message-switch when it
 # runs (the RPM dom0 runs it; the busybox dom0 did not).
 # Round 5: xenopsd-xc without the x86 xen-hypervisor >= 4.20.2-5 floor
@@ -60,7 +63,7 @@
 Summary: xapi - xen toolstack for XCP
 Name:    xapi
 Version: 26.4.0
-Release: 0.riscv64.20261004.git%{rev}%{?dist}
+Release: 0.riscv64.20261005.git%{rev}%{?dist}
 Group:   System/Hypervisor
 License: LGPL-2.1-or-later WITH OCaml-LGPL-linking-exception
 URL:  http://www.xen.org

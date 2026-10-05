@@ -1,16 +1,18 @@
 # riscv64 build of xapi from the RISC-V xen-api fork (Baptiste Le Duc,
 # github.com/baptleduc/xen-api, branch riscv) plus the gounthar/xcpng-riscv64
-# rrdp and xenopsd patches, at e9373d4804. Copy of xapi.spec with: that source, the
+# rrdp and xenopsd patches, at fb1ceb7d53. Copy of xapi.spec with: that source, the
 # x86 qemu-wrapper patches and the Xen 4.21 API patches dropped (this
 # tree builds against the RISC-V Xen 4.18 tree, xen-riscv64), and the
 # test suite skipped (hours under emulation). Experimental.
-%global rev e9373d4804
+%global rev fb1ceb7d53
 # riscv64, from the Kitten dom0 runtime test (2026-10-03): Requires on ssmtp,
 # dmv-utils, vmss, xs-presets, the zipkin exporter, fasteners, nbd,
 # iptables-legacy, jemalloc (only an LD_PRELOAD in the units) and openvswitch
 # dropped (not exercised yet, no VM started on that image); xenopsd-xc needs
 # zstd (its start-up check fails without it; xcp-networkd already requires
 # ethtool, missed there only because that test installed with --nodeps).
+# Round 12: source at fb1ceb7d53, the #90 fix narrowed to blkback in dom0
+# and its Closing write moved into a transaction.
 # Round 11: source at e9373d4804, xenopsd sets the backend Closing on a
 # forced unplug (blkback never reached Closed, so force shutdown sat
 # out the 300 s hotplug timeout; gounthar/xcpng-riscv64 #90).

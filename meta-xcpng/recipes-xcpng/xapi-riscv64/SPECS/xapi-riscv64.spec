@@ -11,6 +11,8 @@
 # dropped (not exercised yet, no VM started on that image); xenopsd-xc needs
 # zstd (its start-up check fails without it; xcp-networkd already requires
 # ethtool, missed there only because that test installed with --nodeps).
+# The date in Release orders rounds: it must go up every round, or the
+# git id decides and can sort a newer round below an older one.
 # Round 13: source at 245b33a319, wsproxy also proxies the PV QEMU socket
 # (/var/run/xen/pv-vnc-N) for the xenfb console (xcpng-riscv64 #82).
 # Round 12: source at fb1ceb7d53, the #90 fix narrowed to blkback in dom0
@@ -67,7 +69,7 @@
 Summary: xapi - xen toolstack for XCP
 Name:    xapi
 Version: 26.4.0
-Release: 0.riscv64.20261005.git%{rev}%{?dist}
+Release: 0.riscv64.20261006.git%{rev}%{?dist}
 Group:   System/Hypervisor
 License: LGPL-2.1-or-later WITH OCaml-LGPL-linking-exception
 URL:  http://www.xen.org

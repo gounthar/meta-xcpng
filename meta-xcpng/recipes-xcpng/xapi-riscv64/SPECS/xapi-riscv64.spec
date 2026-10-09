@@ -15,6 +15,9 @@
 # on. The date stays frozen at 20261006: dropping it would sort round 14
 # below round 13 (rpm compares 14 with 20261006), and a hand-set date that
 # does not move lets the git id decide. Bump the round number every round.
+# Round 16: source unchanged (245b33a319); xcp-networkd requires dhcp-client
+# again, now built by the dhcp-src recipe (xcpng-riscv64 #61). Round 15
+# rebuilt round 14 unchanged and was not published.
 # Round 14: source unchanged (245b33a319); only the Release scheme above.
 # Round 13: source at 245b33a319, wsproxy also proxies the PV QEMU socket
 # (/var/run/xen/pv-vnc-N) for the xenfb console (xcpng-riscv64 #82).
@@ -72,7 +75,7 @@
 Summary: xapi - xen toolstack for XCP
 Name:    xapi
 Version: 26.4.0
-Release: 0.riscv64.20261006.14.git%{rev}%{?dist}
+Release: 0.riscv64.20261006.16.git%{rev}%{?dist}
 Group:   System/Hypervisor
 License: LGPL-2.1-or-later WITH OCaml-LGPL-linking-exception
 URL:  http://www.xen.org
@@ -449,8 +452,9 @@ Requires: libnl3
 # XCP-ng: remove Requires to proprietary component
 # Requires: pvsproxy
 %if 0%{?xcpng}
-# riscv64: no dhcp-client (dhclient is gone in EL10, Kitten has dhcpcd).
-# A DHCP management PIF needs it or a dhcpcd port; a static one does not.
+# riscv64: EL10 has no dhclient; the dhcp-src recipe rebuilds it from
+# EPEL 10's dhcp SRPM. A DHCP management PIF runs /sbin/dhclient.
+Requires: dhcp-client
 %else
 Requires: dhclient
 %endif

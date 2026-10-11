@@ -22,7 +22,7 @@
 
 Name:    kernel-xcpng-riscv64
 Version: 6.18.0
-Release: %{krel}%{?dist}
+Release: %{krel}.1%{?dist}
 Summary: Linux kernel for a Xen dom0 on riscv64 (experimental)
 License: GPL-2.0-only
 URL:     https://github.com/gounthar/linux-xen-riscv/tree/dom0/all-fixes-20261007
@@ -71,6 +71,9 @@ install -d -m 755 %{buildroot}/boot
 install -m 644 arch/riscv/boot/Image.gz %{buildroot}/boot/vmlinuz-%{uname}
 install -m 644 System.map %{buildroot}/boot/System.map-%{uname}
 install -m 644 .config %{buildroot}/boot/config-%{uname}
+# Stable name for the U-Boot boot script on the dom0 disk, as the x86
+# kernel.spec ships /boot/vmlinuz-<short>-xen
+ln -s vmlinuz-%{uname} %{buildroot}/boot/vmlinuz-xcpng
 %{__make} INSTALL_MOD_PATH=%{buildroot} INSTALL_MOD_STRIP=1 DEPMOD=/bin/true modules_install
 rm -f %{buildroot}/lib/modules/%{uname}/build %{buildroot}/lib/modules/%{uname}/source
 
@@ -81,8 +84,12 @@ rm -f %{buildroot}/lib/modules/%{uname}/build %{buildroot}/lib/modules/%{uname}/
 /boot/vmlinuz-%{uname}
 /boot/System.map-%{uname}
 /boot/config-%{uname}
+/boot/vmlinuz-xcpng
 /lib/modules/%{uname}
 
 %changelog
+* Sun Oct 11 2026 Bruno Verachten <gounthar@gmail.com> - 6.18.0-0.riscv64.20261011.gite42e2d799.1
+- Ship /boot/vmlinuz-xcpng, a stable name for the U-Boot boot script
+
 * Sun Oct 11 2026 Bruno Verachten <gounthar@gmail.com> - 6.18.0-0.riscv64.20261011.gite42e2d799
 - First riscv64 dom0 kernel build (experimental)

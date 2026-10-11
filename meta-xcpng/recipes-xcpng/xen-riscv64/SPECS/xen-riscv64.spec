@@ -9,14 +9,14 @@
 # it is. Package names follow xen.spec, so that xapi's BuildRequires
 # (xen-devel, xen-dom0-libs-devel, xen-ocaml-devel) resolve.
 
-%global rev 0ef4cdf884
+%global rev d10435186e
 # First build: no debuginfo, find-debuginfo would also process the
 # hypervisor image in /boot
 %global debug_package %{nil}
 
 Name:    xen
 Version: 4.18.0
-Release: 0.riscv64.20261004.git%{rev}%{?dist}
+Release: 0.riscv64.20261011.git%{rev}%{?dist}
 Summary: Xen hypervisor and tools (RISC-V port, experimental)
 License: GPL-2.0-only AND LGPL-2.1-only AND MIT AND BSD-2-Clause
 URL:     https://gitlab.com/xen-project/people/baptleduc/xen
@@ -177,6 +177,11 @@ find . -type d -empty | sed 's|^\.||' | grep -vE '^/boot' | sed 's|^|%%dir |' >>
 %{python3_sitearch}/*
 
 %changelog
+* Sun Oct 11 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261011.gitd10435186e
+- Xen MRs !4-!7: guest SBI SRST, HSM, IPI and RFENCE; a dead domain is really
+  destroyed; a vCPU executing wfi blocks; vstimecmp is context-switched and a
+  blocked Sstc guest is woken
+
 * Sun Oct 04 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261004.git0ef4cdf884
 - this_cpu_ptr() uses the per-CPU offset (grant-table panic under network load)
 

@@ -16,7 +16,7 @@
 
 Name:    xen
 Version: 4.18.0
-Release: 0.riscv64.20261011.1.git%{rev}%{?dist}
+Release: 0.riscv64.20261011.2.git%{rev}%{?dist}
 Summary: Xen hypervisor and tools (RISC-V port, experimental)
 License: GPL-2.0-only AND LGPL-2.1-only AND MIT AND BSD-2-Clause
 URL:     https://gitlab.com/xen-project/people/baptleduc/xen
@@ -144,8 +144,9 @@ export XEN_TARGET_ARCH=riscv64
 install -D -m 644 xen/build-rv64/xen %{buildroot}/boot/xen-%{version}-%{release}
 # U-Boot's bootm starts Xen from a legacy uImage. The boot script names the
 # stable /boot/xen.uimg, so an upgrade only moves this symlink, as xen.spec
-# does with /boot/xen.gz on x86. 0x80200000: start of RAM + 2 MiB on QEMU virt.
-python3 %{SOURCE2} -a 0x80200000 -n "Xen %{version} %{rev}" \
+# does with /boot/xen.gz on x86. kernel_noload: bootm runs Xen where the boot
+# script loaded it (the board's ${kernel_addr_r}), so one image fits every board.
+python3 %{SOURCE2} --noload -n "Xen %{version} %{rev}" \
     xen/build-rv64/xen %{buildroot}/boot/xen-%{version}-%{release}.uimg
 ln -s xen-%{version}-%{release}.uimg %{buildroot}/boot/xen.uimg
 # As xen.spec does (%exclude): do not ship Xen's own OCaml xenstore and
@@ -187,6 +188,10 @@ find . -type d -empty | sed 's|^\.||' | grep -vE '^/boot' | sed 's|^|%%dir |' >>
 %{python3_sitearch}/*
 
 %changelog
+* Mon Oct 12 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261011.2.gitd10435186e
+- Ship Xen as a kernel_noload uImage: no load address baked in, the boot
+  script picks it from the board's U-Boot environment
+
 * Sun Oct 11 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261011.1.gitd10435186e
 - Ship Xen as a U-Boot legacy image and a stable /boot/xen.uimg symlink,
   for a U-Boot boot script on the dom0 disk

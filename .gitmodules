@@ -1,9 +1,9 @@
 [submodule "dnf-bridge"]
 	path = dnf-bridge
-	url = https://github.com/xcp-ng/dnf-bridge
+	url = https://github.com/gounthar/dnf-bridge
 [submodule "meta-almalinux"]
 	path = meta-almalinux
-	url = https://github.com/xcp-ng/meta-almalinux.git
+	url = https://github.com/gounthar/meta-almalinux.git
 [submodule "meta-xcpng/recipes-xcpng/libempserver"]
 	path = meta-xcpng/recipes-xcpng/libempserver
 	url = https://github.com/xcp-ng-rpms/libempserver.git
@@ -21,7 +21,7 @@
 	url = https://github.com/xcp-ng-rpms/ocaml-findlib
 [submodule "meta-xcpng/recipes-xcpng/xen"]
 	path = meta-xcpng/recipes-xcpng/xen
-	url = https://github.com/xcp-ng-rpms/xen.git
+	url = https://github.com/gounthar/xen.git
 [submodule "meta-xcpng/recipes-epel-queue/dev86"]
 	path = meta-xcpng/recipes-epel-queue/dev86
 	url = https://github.com/xcp-ng-rpms/dev86.git
@@ -33,7 +33,7 @@
 	url = https://github.com/xcp-ng-rpms/xs-opam-src.git
 [submodule "meta-xcpng/recipes-xcpng/xs-opam-repo"]
 	path = meta-xcpng/recipes-xcpng/xs-opam-repo
-	url = https://github.com/xcp-ng-rpms/xs-opam-repo.git
+	url = https://github.com/gounthar/xs-opam-repo.git
 [submodule "meta-xcpng/recipes-xcpng/sm"]
 	path = meta-xcpng/recipes-xcpng/sm
 	url = https://github.com/xcp-ng-rpms/sm.git

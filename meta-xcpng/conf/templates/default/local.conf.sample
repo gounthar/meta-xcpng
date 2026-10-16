@@ -27,6 +27,9 @@
 #MACHINE ?= "aarch64"
 # This sets the default machine to be x86_64_v2 if no other machine is selected:
 MACHINE ??= "x86_64_v2"
+#
+# riscv64 also needs the Kitten bridge settings:
+#require conf/riscv64-kitten.inc
 
 # These are some of the more commonly used values. Looking at the files in the
 # meta/conf/machine directory, or the conf/machine directory of any additional layers

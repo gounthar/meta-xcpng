@@ -9,14 +9,14 @@
 # it is. Package names follow xen.spec, so that xapi's BuildRequires
 # (xen-devel, xen-dom0-libs-devel, xen-ocaml-devel) resolve.
 
-%global rev d10435186e
+%global rev 8fcce53948
 # First build: no debuginfo, find-debuginfo would also process the
 # hypervisor image in /boot
 %global debug_package %{nil}
 
 Name:    xen
 Version: 4.18.0
-Release: 0.riscv64.20261011.2.git%{rev}%{?dist}
+Release: 0.riscv64.20261017.git%{rev}%{?dist}
 Summary: Xen hypervisor and tools (RISC-V port, experimental)
 License: GPL-2.0-only AND LGPL-2.1-only AND MIT AND BSD-2-Clause
 URL:     https://gitlab.com/xen-project/people/baptleduc/xen
@@ -188,6 +188,11 @@ find . -type d -empty | sed 's|^\.||' | grep -vE '^/boot' | sed 's|^|%%dir |' >>
 %{python3_sitearch}/*
 
 %changelog
+* Sat Oct 17 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261017.git8fcce53948
+- Leave PCI host bridges out of dom0's device tree: dom0 no longer probes
+  an ECAM window Xen does not map, so the boot script need not delete the
+  node first
+
 * Mon Oct 12 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261011.2.gitd10435186e
 - Ship Xen as a kernel_noload uImage: no load address baked in, the boot
   script picks it from the board's U-Boot environment

@@ -11,9 +11,11 @@ RDEPENDS:rpm-libs:remove = "rpm-plugin-syslog"
 RDEPENDS:almalinux-kitten-release:remove = "almalinux-kitten-repos"
 RPROVIDES:systemd:remove = "virtual/group_dialout_"
 RPROVIDES:systemd:remove = "virtual/group_tty_"
-# xcp-ng-build-env, riscv64/kitten branch (riscv64 platform + Kitten Dockerfile)
+# xcp-ng-build-env, riscv64/kitten branch (riscv64 platform, Kitten Dockerfile, --layer-repo)
 SRC_URI:pn-build-env = "git://github.com/gounthar/xcp-ng-build-env.git;protocol=https;branch=riscv64/kitten"
-SRCREV:pn-build-env = "47bab3f2299e0cdd894d7c6fcf840d83064282ca"
+SRCREV:pn-build-env = "40f55a064a0a1cbe3f4708ae87896b520f7f2e29"
+# build the build-env images from the layer RPMs, not the live repos (build-env.bb)
+BUILD_ENV_PACKAGES:pn-build-env = "riscv64-kitten.packages"
 # riscv64: yajl from our in-tree yajl-src (Kitten has no riscv64 yajl binary)
 PREFERRED_PROVIDER_rpm/yajl = "yajl-src"
 PREFERRED_PROVIDER_rpm/yajl-devel = "yajl-src"

@@ -50,3 +50,21 @@ RDEPENDS:pyproject-srpm-macros:remove = "pyproject-rpm-macros"
 # riscv64: hide the stock qemu recipe (x86 HVM device model); qemu-riscv64 builds the PV-backend-only
 # QEMU for the xenfb console (xcpng-riscv64 #92) under the same package name.
 BBMASK += "/recipes-xcpng/qemu\.bb$"
+# Cycles in the runtime closure of riscv64-kitten.packages (do_layer_repo).  RPM installs a
+# cycle, BitBake cannot order one, so one edge of each is dropped from the task graph; the
+# packages still land in the layer repo through the other edge.
+# cronie -> virtual/dailyjobs (cronie-anacron) -> cronie
+RDEPENDS:cronie-anacron:remove = "cronie"
+# cronie -> virtual/dailyjobs (cronie-anacron) -> crontabs -> cronie
+RDEPENDS:crontabs:remove = "cronie"
+RDEPENDS:python3-gobject-base:remove = "python3-gobject-base-noarch"
+RDEPENDS:rpm-plugin-selinux:remove = "selinux-policy"
+# selinux-policy -> virtual/selinux-policy-any_eq (selinux-policy-mls or -targeted) -> selinux-policy
+RDEPENDS:selinux-policy-mls:remove = "selinux-policy"
+RDEPENDS:selinux-policy-targeted:remove = "selinux-policy"
+# grub2-tools -> os-prober -> systemd-udev -> grubby -> grub2-tools, and dracut -> systemd-udev ->
+# grubby -> grub2-tools -> dracut.  On riscv64 the grubby of systemd-udev is the bridged
+# grubby-or-sdubby rich dependency, and grubby has no virtual to break it at on riscv64.
+RDEPENDS:systemd-udev:remove = "grubby"
+# rsyslog is in riscv64-kitten.packages and systemd is the preferred virtual/syslog provider
+RPROVIDES:rsyslog:remove = "virtual/syslog"

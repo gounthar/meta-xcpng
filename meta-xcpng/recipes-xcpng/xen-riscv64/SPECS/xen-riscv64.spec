@@ -9,14 +9,14 @@
 # it is. Package names follow xen.spec, so that xapi's BuildRequires
 # (xen-devel, xen-dom0-libs-devel, xen-ocaml-devel) resolve.
 
-%global rev 006837b8b6
+%global rev 8bed907f9c
 # First build: no debuginfo, find-debuginfo would also process the
 # hypervisor image in /boot
 %global debug_package %{nil}
 
 Name:    xen
 Version: 4.18.0
-Release: 0.riscv64.20261106.git%{rev}%{?dist}
+Release: 0.riscv64.20261109.git%{rev}%{?dist}
 Summary: Xen hypervisor and tools (RISC-V port, experimental)
 License: GPL-2.0-only AND LGPL-2.1-only AND MIT AND BSD-2-Clause
 URL:     https://gitlab.com/xen-project/people/baptleduc/xen
@@ -188,6 +188,15 @@ find . -type d -empty | sed 's|^\.||' | grep -vE '^/boot' | sed 's|^|%%dir |' >>
 %{python3_sitearch}/*
 
 %changelog
+* Mon Nov 09 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261109.git8bed907f9c
+- Clear sscratch at boot and on secondary hart entry: Xen no longer hangs
+  on its first trap under UEFI firmware that leaves it non-zero
+- dom0 gets the PCI host bridge (ECAM and windows mapped 1:1, INTx through
+  the vAPLIC) instead of having it removed from its device tree
+- PCI MSIs reach dom0: its IMSIC files sit at their machine addresses
+- NR_CPUS raised from 8 to 128, for hosts with more harts (hart IDs up to
+  0x7f)
+
 * Fri Nov 06 2026 Bruno Verachten <gounthar@gmail.com> - 4.18.0-0.riscv64.20261106.git006837b8b6
 - XSA-500, XSA-505 and XSA-523 fixes
 - vmap_to_mfn() walks the page table: Xen no longer crashes when a
